@@ -1,7 +1,6 @@
 #!/bin/bash
 # ................................................
 # builder util 1.0 2020-diasgc
-# git: https://github.com/diasgc/bashscripts.git
 # ................................................
 
 # def colors
@@ -1047,7 +1046,7 @@ setup(){
 }
 
 showBanner(){
-  echo -ne "\n\n  ${CW}Bashscripts Build 2.1 for Linux${C0}\n  "
+  echo -ne "\n\n  ${CW}Cross.compile Scripts 1.0 for Linux${C0}\n  "
   if [ -n "$(uname -r | grep 'microsoft')" ];then
     echo -ne "WSL2 "
   elif [ -n "$(uname -r | grep 'Microsoft')" ];then
