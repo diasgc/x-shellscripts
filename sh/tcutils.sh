@@ -19,6 +19,15 @@ debug=
 vsh='2.2'
 cmake_build_type=Release
 
+aptInstallBr(){
+  while [ "$1" != "" ];do
+    echo -ne "  ${CT0}install $1${C0} "
+    sudo apt -qq install $1 -y >/dev/null 2>&1
+    echo -e "${C0}ok ${CT1}done${C0} $(apt-cache show $1 | grep Version)"
+    shift
+  done
+}
+
 if test -z "$INIT"; then
   case "$(uname -s)" in
     Linux)  BUILD_TRIP=$(echo $(uname -m)-linux-gnu)
@@ -33,17 +42,20 @@ if test -z "$INIT"; then
   esac
 
   # check make
-  test -z $(which make) && aptInstall make
+  test -z $(which make) && aptInstallBr make
   export MAKE_EXECUTABLE=$(which make)
+  # check cmake
+  test -z $(which cmake) && aptInstallBr cmake
+  export CMAKE_EXECUTABLE=$(which cmake)
   # check nasm
-  test -z $(which nasm) && aptInstall nasm
+  test -z $(which nasm) && aptInstallBr nasm
   export NASM_EXECUTABLE=$(which nasm)
   # check pkg-config
-  [ -z $(which pkg-config) ] && aptInstall pkg-config
+  [ -z $(which pkg-config) ] && aptInstallBr pkg-config
   export PKG_CONFIG=$(which pkg-config)
 
   [[ $bty = 'ac' ]] && test -z $(which autoconf) && \
-    aptInstall automake autoconf autogen autopoint libtool m4
+    aptInstallBr automake autoconf autogen autopoint libtool m4
   export BUILD_TRIP HOST_NPROC=$(nproc) INIT="ON" ROOTDIR=$(pwd)
   #`dirname "$0"`
 fi
