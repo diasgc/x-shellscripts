@@ -28,10 +28,10 @@ deft_opts="fdk-aac lv2 mp3lame opus pulse shine snappy speex twolame vorbis wavp
   tesseract gnutls bluray libjack openmpt v4l2 xml2 mediacodec openal opengl"
 # -----------------------------------------
 
-#echo -ne "\n  Checking all required tools...please wait"
-#sudo apt update >/dev/null
-#sudo apt -qq install build-essential dialog -y >/dev/null
-#echo
+echo -ne "\n  Checking all required tools...please wait"
+sudo apt update >/dev/null
+sudo apt -qq install build-essential dialog -y >/dev/null
+echo
 
 archs=""
 

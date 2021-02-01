@@ -47,6 +47,8 @@ if test -z "$INIT"; then
   # check cmake
   test -z $(which cmake) && aptInstallBr cmake
   export CMAKE_EXECUTABLE=$(which cmake)
+  # check ccmake
+  test -z $(which cmake) && aptInstallBr cmake-curses-gui
   # check nasm
   test -z $(which nasm) && aptInstallBr nasm
   export NASM_EXECUTABLE=$(which nasm)
