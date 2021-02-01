@@ -45,7 +45,7 @@ CFG="-DPNG_LIBRARY=$LIBSDIR/libpng/lib/libpng.a -DPNG_PNG_INCLUDE_DIR=$LIBSDIR/l
 CFG="-DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/${arch}.cmake $CFG"
 #export CXXFLAGS="-I$LIBSDIR/libpng/include -I$dbld"
 export LDFLAGS="-L$LIBSDIR/libpng/lib -lz -lpng -L$dbld -lflif_lib"
-#export LIBS="-lz -lpng"
+export LIBS="-lz -lpng"
 
 # Use function buildSrc to custom clone repo
 # Use function patchSrc to custom patch src and/or configure

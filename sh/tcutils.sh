@@ -48,7 +48,7 @@ if test -z "$INIT"; then
   test -z $(which cmake) && aptInstallBr cmake
   export CMAKE_EXECUTABLE=$(which cmake)
   # check ccmake
-  test -z $(which cmake) && aptInstallBr cmake-curses-gui
+  test -z $(which ccmake) && aptInstallBr cmake-curses-gui
   # check nasm
   test -z $(which nasm) && aptInstallBr nasm
   export NASM_EXECUTABLE=$(which nasm)
@@ -56,7 +56,7 @@ if test -z "$INIT"; then
   [ -z $(which pkg-config) ] && aptInstallBr pkg-config
   export PKG_CONFIG=$(which pkg-config)
 
-  [[ $bty = 'ac' ]] && test -z $(which autoconf) && \
+  test -z $(which autoconf) && \
     aptInstallBr automake autoconf autogen autopoint libtool m4
   export BUILD_TRIP HOST_NPROC=$(nproc) INIT="ON" ROOTDIR=$(pwd)
   #`dirname "$0"`
@@ -569,7 +569,7 @@ download(){
   # bsdtar from stdin doesn't extract file +x permission
   # wget -qO- $1 | bsdtar -xvf- >/dev/null 2>&1
   echo -ne " ${CD}checking tools"
-  checkCmd unzip
+  test -z $(which unzip) && aptInstallBr unzip
   echo -ne " ${CS0}downloading..."
   tput sc && echo -ne "\e[$(tput lines);0H${CY1}"
   wget --progress=dot $1 -O tmp.zip 2>&1 | grep --line-buffered "%" | sed -u -e "s,\.,,g" | awk '{printf("\r%4s %s eta:%s  ",$2,$1,$4)}'
@@ -608,7 +608,7 @@ installAndroidNDK(){
       echo -ne " $ndkv): ${CW}" && read ANDROID_NDK_VERSION
       if [ "$ANDROID_NDK_VERSION" == "latest" ];then
         NDK_URL=$(getLatestNdkUrl)
-        ANDROID_NDK_VERSION=$(echo $NDK_URL | grep -Eo 'r[0-9]+[a-z]')
+        ANDROID_NDK_VERSION=$(echo $NDK_URL | grep -Eo 'r[0-9a-z]+')
         break
       fi
       NDK_URL="https://dl.google.com/android/repository/android-ndk-${ANDROID_NDK_VERSION}-linux-x86_64.zip"
@@ -618,7 +618,7 @@ installAndroidNDK(){
     pushd $ANDROID_HOME >/dev/null
     echo -ne "\n  ${C1}Installing NDK-${ANDROID_NDK_VERSION}..." && download $NDK_URL && echo -e "${CW} ok ${C0}" || err
     mv android-ndk-* android-ndk
-    [ -z "$(cat ~/.bashrc | grep 'ANDROID_NDK_HOME')" ] && printf "export ANDROID_NDK_HOME=$ANDROID_HOME/android_ndk\n" >> ~/.bashrc
+    [ -z "$(cat ~/.bashrc | grep 'ANDROID_NDK_HOME')" ] && printf "export ANDROID_NDK_HOME=$ANDROID_HOME/android-ndk\n" >> ~/.bashrc
     popd >/dev/null
   else
     echo -e "${CT1} Android-NDK: v.${ndk_v}${CT0}"
