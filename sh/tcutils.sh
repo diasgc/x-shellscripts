@@ -72,10 +72,27 @@ main(){
 
   PKGDIST=$ROOTDIR/packages/$arch
   LIBSDIR=$ROOTDIR/builds/$arch
+  INSTALL_DIR=$LIBSDIR/$lib
+  
+  case $arch in
+    aarch64-*android*)
+      LIBSDIR=$ROOTDIR/builds/android/arm64-v8a
+      INSTALL_DIR=$LIBSDIR;;
+    arm-*android*)
+      LIBSDIR=$ROOTDIR/builds/android/armeabi-v7a
+      INSTALL_DIR=$LIBSDIR;;
+    i686-*android*)
+      LIBSDIR=$ROOTDIR/builds/android/x86
+      INSTALL_DIR=$LIBSDIR;;
+    x86_64-*android*)
+      LIBSDIR=$ROOTDIR/builds/android/x64
+      INSTALL_DIR=$LIBSDIR;;
+  esac
+
   SOURCES=$ROOTDIR/sources
   SRCDIR=$SOURCES/$lib
-  INSTALL_DIR=$LIBSDIR/$lib
   PKGDIR=$INSTALL_DIR/lib/pkgconfig
+  
   export PKGDIST LIBSDIR SOURCES SRCDIR INSTALL_DIR PKGDIR
   [ -d $SOURCES ] || mkdir -p $SOURCES
 
@@ -102,7 +119,7 @@ start(){
   [ -f $LOGFILE ] && rm -f $LOGFILE
 
   # Reset INSTALL_DIR
-  [ -d $INSTALL_DIR ] && rm -rf $INSTALL_DIR
+  # [ -d $INSTALL_DIR ] && rm -rf $INSTALL_DIR
 
   # Create INSTALL_DIR and PKGCONFIG DIR
   mkdir -p $PKGDIR
@@ -442,7 +459,10 @@ chkDeps(){
     pkgfile=$(./$1.sh $arch --checkPkg)
     libname=$(./$1.sh --libName)
     [ -n "$pkgfile" ] || ./$1.sh $arch || err
-    [ -n "$libname" ] && cp -f $LIBSDIR/$libname/lib/pkgconfig/*.pc $PKGDIR
+    case $arch in
+      *android* ) ;;
+      * ) [ -n "$libname" ] && cp -f $LIBSDIR/$libname/lib/pkgconfig/*.pc $PKGDIR;;
+    esac
     # export PKG_CONFIG_PATH=$pkgfile:$PKG_CONFIG_PATH
     # echoBottom $PKG_CONFIG_PATH
     shift

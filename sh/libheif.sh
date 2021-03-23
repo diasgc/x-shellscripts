@@ -48,11 +48,18 @@ else
   test $arch != x86_64-linux-gnu && CFG="--host=${arch} --with-sysroot=${SYSROOT} $CFG"
 fi
 
-export LDFLAGS="-static -L$LIBSDIR/libjpeg/lib -L$LIBSDIR/zlib/lib" \
-  CPPFLAGS="-static -I$LIBSDIR/libjpeg/include -I$LIBSDIR/zlib/include" \
-  CXXFLAGS="-static -Wno-error -static-libgcc -static-libstdc++" \
-  CFLAGS="-static -Wno-error" \
-  LIBS="-lz $LIBS"
+case $arch in
+  *android*) export LDFLAGS="-static -L$LIBSDIR/lib -ljpeg -lz" \
+    CPPFLAGS="-static -I$LIBSDIR/include" \
+    CXXFLAGS="-static -Wno-error -static-libgcc -static-libstdc++" \
+    CFLAGS="-static -Wno-error" \
+    LIBS="-lz -ljpeg $LIBS";;
+  *) export LDFLAGS="-static -L$LIBSDIR/libjpeg/lib -L$LIBSDIR/zlib/lib" \
+    CPPFLAGS="-static -I$LIBSDIR/libjpeg/include -I$LIBSDIR/zlib/include" \
+    CXXFLAGS="-static -Wno-error -static-libgcc -static-libstdc++" \
+    CFLAGS="-static -Wno-error" \
+    LIBS="-lz $LIBS";;
+esac
 
 # Use function buildSrc to custom clone repo
 # Use function patchSrc to custom patch src and/or configure
@@ -62,18 +69,20 @@ patchSrc(){
 
 # Use function beforeBuild to execute extra code before buildLib
 beforeBuild(){
-  setPkgConfigDir $PKGDIR zlib
-  case $arch in
-    *linux*) 
-      if [ -f $LIBSDIR/libnuma/lib/pkgconfig/libnuma.pc ];then
-        cp $LIBSDIR/libnuma/lib/pkgconfig/libnuma.pc $PKGDIR
-      fi
-      LDFLAGS="$LDFLAGS -Wl,-rpath,$LT_SYS_LIBRARY_PATH"
-      CPPFLAGS="$CPPFLAGS -I$LIBSDIR/libnuma/include"
-      LIBS="-lnuma -ldl $LIBS"
-      ;;
-  esac
-  #export LDFLAGS CFLAGS CXXFLAGS CPPFLAGS LIBS
+  if test $arch != *android* ;then
+    setPkgConfigDir $PKGDIR zlib
+    case $arch in
+      *linux*) 
+        if [ -f $LIBSDIR/libnuma/lib/pkgconfig/libnuma.pc ];then
+          cp $LIBSDIR/libnuma/lib/pkgconfig/libnuma.pc $PKGDIR
+        fi
+        LDFLAGS="$LDFLAGS -Wl,-rpath,$LT_SYS_LIBRARY_PATH"
+        CPPFLAGS="$CPPFLAGS -I$LIBSDIR/libnuma/include"
+        LIBS="-lnuma -ldl $LIBS"
+        ;;
+    esac
+    #export LDFLAGS CFLAGS CXXFLAGS CPPFLAGS LIBS
+  fi
 }
 # Use function buildLib to custom build
 # Use function buildPC to manually build pkg-config .pc file

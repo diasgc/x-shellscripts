@@ -10,7 +10,7 @@ lic='BSD'
 src='https://github.com/mirrorer/libbpg.git'
 sty='git'
 cfg='mk'
-tls=''
+tls='yasm libpng-dev libjpeg-dev libsdl2-dev'
 dep=''
 pkg='libbpg'
 
@@ -32,9 +32,16 @@ CBN=$cb0
 . tcutils.sh
 loadToolchain
 
-CFG="-i CC=$CC CXX=$CXX AR=$AR CFLAGS=-I$LIBSDIR/libpng/include LDFLAGS=-L$LIBSDIR/libpng/lib prefix=${INSTALL_DIR} USE_BPGVIEW=n USE_EMCC=n"
+CFG="-i CC=$CC CXX=$CXX AR=$AR prefix=${INSTALL_DIR} USE_BPGVIEW=n USE_EMCC=n"
 [[ $arch = *mingw32 ]] && CFG="$CFG CONFIG_WIN32=y"
 dbld=$SRCDIR
+
+patchSrc(){
+	ln -s /usr/include/libpng16/png.h $SRCDIR/png.h
+	ln -s /usr/include/libpng16/pnglibconf.h $SRCDIR/pnglibconf.h
+	ln -s /usr/include/jpeglib.h $SRCDIR/jpeglib.h
+	ln -s /usr/include/SDL2 $SRCDIR/SDL2
+}
 
 # Required function buildLib
 buildLib(){

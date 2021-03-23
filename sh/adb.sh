@@ -42,7 +42,7 @@ case $arch in
     lrt="${ANDROID_NDK_HOME}/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/lib/${arch}/librt.a"
     dep='ncurses'
     [ ! -f $lrt ] && $AR cr $lrt
-    export LDFLAGS="-L$LIBSDIR/ncurses/lib -lncurses"
+    export LDFLAGS="-L$LIBSDIR/lib -lncurses" LIBS="-lncurses"
     ;;
 esac
 

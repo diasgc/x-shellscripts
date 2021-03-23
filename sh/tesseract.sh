@@ -47,7 +47,11 @@ if test $cfg = 'cm'; then
   CBN=$cb1
   setBuildOpts
   dbld=$SRCDIR/build_${arch}
-  CFG="-DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/${arch}.cmake -Dpkgcfg_lib_Leptonica_lept=$LIBSDIR/leptonica/lib/pkgconfig/lept.pc"
+  case $arch in
+    *android*) leptpkgdir=$LIBSDIR/lib/pkgconfig/lept.pc;;
+    *) leptpkgdir=$LIBSDIR/leptonica/lib/pkgconfig/lept.pc
+  esac
+  CFG="-DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/${arch}.cmake -Dpkgcfg_lib_Leptonica_lept=$leptpkgdir"
 else
   [ -d $SRCDIR ] && [ ! -f $SRCDIR/configure ] && doAutogen $SRCDIR
   test $arch != x86_64-linux-gnu && CFG="--host=${arch} --with-sysroot=${SYSROOT} $CFG"
