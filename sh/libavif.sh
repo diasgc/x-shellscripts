@@ -28,15 +28,23 @@ cs1="-DBUILD_SHARED_LIBS=ON"
 cb0="-DAVIF_BUILD_APPS=OFF"
 cb1="-DAVIF_BUILD_APPS=ON"
 CSH=$cs0
-CBN=$cb0
+CBN=$cb1
 # -----------------------------------------
 
 . tcutils.sh
-CFG="-DAVIF_BUILD_EXAMPLES=OFF -DAVIF_BUILD_TESTS=OFF -DAVIF_CODEC_AOM=ON \
-	-DAOM_INCLUDE_DIR=$LIBSDIR/aom/include -DAOM_LIBRARY=$LIBSDIR/aom/lib/libaom.a \
-	-DPNG_PNG_INCLUDE_DIR=$LIBSDIR/libpng/include -DPNG_LIBRARY=$LIBSDIR/libpng/lib/libpng.a \
-	-DJPEG_INCLUDE_DIR=$LIBSDIR/libjpeg/include -DJPEG_LIBRARY=$LIBSDIR/libjpeg/lib/libjpeg.a \
-	-DZLIB_INCLUDE_DIR=$LIBSDIR/zlib/include -DZLIB_LIBRARY=$LIBSDIR/zlib/lib/libz.a"
+case $arch in
+	*android*) CFG="-DAVIF_BUILD_EXAMPLES=OFF -DAVIF_BUILD_TESTS=OFF -DAVIF_CODEC_AOM=ON \
+		-DAOM_INCLUDE_DIR=$LIBSDIR/include -DAOM_LIBRARY=$LIBSDIR/lib/libaom.a \
+		-DPNG_PNG_INCLUDE_DIR=$LIBSDIR/include -DPNG_LIBRARY=$LIBSDIR/lib/libpng.a \
+		-DJPEG_INCLUDE_DIR=$LIBSDIR/include -DJPEG_LIBRARY=$LIBSDIR/lib/libjpeg.a \
+		-DZLIB_INCLUDE_DIR=$LIBSDIR/include -DZLIB_LIBRARY=$LIBSDIR/lib/libz.a";;
+	*) CFG="-DAVIF_BUILD_EXAMPLES=OFF -DAVIF_BUILD_TESTS=OFF -DAVIF_CODEC_AOM=ON \
+		-DAOM_INCLUDE_DIR=$LIBSDIR/aom/include -DAOM_LIBRARY=$LIBSDIR/aom/lib/libaom.a \
+		-DPNG_PNG_INCLUDE_DIR=$LIBSDIR/libpng/include -DPNG_LIBRARY=$LIBSDIR/libpng/lib/libpng.a \
+		-DJPEG_INCLUDE_DIR=$LIBSDIR/libjpeg/include -DJPEG_LIBRARY=$LIBSDIR/libjpeg/lib/libjpeg.a \
+		-DZLIB_INCLUDE_DIR=$LIBSDIR/zlib/include -DZLIB_LIBRARY=$LIBSDIR/zlib/lib/libz.a";;
+esac
+
 dbld=$SRCDIR/build_${arch}
 loadToolchain
 CFG="-DCMAKE_TOOLCHAIN_FILE=$(pwd)/cmake/${arch}.cmake $CFG"
